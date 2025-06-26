@@ -987,7 +987,8 @@ class AuthService {
 }
 
 class ApiService {
-  static const _baseUrl = 'http://localhost:8000/api';
+  static const _baseUrl =
+      'https://63ea-2401-4900-5993-9ae4-f045-56d-a376-f14.ngrok-free.app/api';
 
   Future<Map<String, String>> _getHeadersWithAuth() async {
     final token = await AuthService.getToken();
