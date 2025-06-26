@@ -1,5 +1,6 @@
 FROM richarvey/nginx-php-fpm:latest
 
+
 COPY . .
 
 # Image config
