@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: livsto-laravel
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    autoDeploy: true
