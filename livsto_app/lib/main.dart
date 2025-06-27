@@ -989,7 +989,7 @@ class AuthService {
 }
 
 class ApiService {
-  static const _baseUrl = 'http://localhost:8000/api';
+  static const _baseUrl = 'https://livsto-1.onrender.com/api';
 
   Future<Map<String, String>> _getHeadersWithAuth() async {
     final token = await AuthService.getToken();
