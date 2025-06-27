@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -987,13 +989,13 @@ class AuthService {
 }
 
 class ApiService {
-  static const _baseUrl =
-      'https://63ea-2401-4900-5993-9ae4-f045-56d-a376-f14.ngrok-free.app/api';
+  static const _baseUrl = 'http://localhost:8000/api';
 
   Future<Map<String, String>> _getHeadersWithAuth() async {
     final token = await AuthService.getToken();
-    if (token == null)
+    if (token == null) {
       throw Exception('Authentication token not found. Please log in.');
+    }
     return {
       'Authorization': 'Bearer $token',
       'Accept': 'application/json',
@@ -1024,8 +1026,9 @@ class ApiService {
     XFile? imageFile,
   ) async {
     final token = await AuthService.getToken();
-    if (token == null)
+    if (token == null) {
       throw Exception('Authentication token not found. Please log in.');
+    }
 
     Uri uri = Uri.parse('$_baseUrl/products');
 
