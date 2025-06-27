@@ -4,7 +4,8 @@ services:
     env: php
     buildCommand: composer install --no-dev
     startCommand: php -S 0.0.0.0:10000 -t public
- `
+    staticPublishPath: public
+    dockerfilePath: Dockerfile
     plan: free
     envVars:
       - key: APP_KEY
