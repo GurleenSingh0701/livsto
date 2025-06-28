@@ -1,20 +1,17 @@
-# Stage 1: Composer
+# Stage 1: Build Composer dependencies
 FROM composer:latest AS composer
 
 WORKDIR /app
 
-# Copy entire Laravel project
 COPY . .
-
-# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-
-# Stage 2: PHP with FPM
+# Stage 2: Laravel + PHP-FPM + Nginx
 FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    nginx \
     git \
     curl \
     zip \
@@ -23,16 +20,34 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
+    supervisor \
     && docker-php-ext-install pdo pdo_mysql zip
 
-# Copy project files from composer stage
+# Set working directory
 WORKDIR /var/www/html
+
+# Copy Laravel app from composer stage
 COPY --from=composer /app /var/www/html
 
-# Set permissions (optional but recommended)
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Copy nginx config
+COPY nginx.conf /etc/nginx/sites-available/default
 
-# Expose port 9000 and start php-fpm
-EXPOSE 9000
-CMD ["php-fpm"]
+# Copy supervisord config to run both Nginx and PHP-FPM
+COPY --chown=www-data:www-data . /var/www/html
+
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && echo "daemon off;" >> /etc/nginx/nginx.conf
+
+RUN php artisan migrate --force
+
+# Supervisor config to run Nginx + PHP-FPM
+COPY --chown=root:root ./supervisord.conf /etc/supervisord.conf
+
+# Expose port 80 for HTTP
+EXPOSE 80
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
