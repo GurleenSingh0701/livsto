@@ -1,0 +1,33 @@
+# Laravel folders to ignore
+
+
+node_modules
+vendor
+public/storage
+.env
+
+# Environment & config
+.env
+.env.*.backup
+.env.backup
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker-related files
+.dockerignore
+docker-compose.yml
+
+# Mac/Windows system files
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.idea
+.vscode
+
+# Tests and docs (optional)
+phpunit.xml
+tests/

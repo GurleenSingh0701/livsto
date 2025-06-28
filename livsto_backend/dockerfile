@@ -1,26 +1,38 @@
+# Stage 1: Composer
+FROM composer:latest AS composer
+
+WORKDIR /app
+
+# Copy entire Laravel project
+COPY . .
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+
+# Stage 2: PHP with FPM
 FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip sqlite3 \
-    && docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
+    git \
+    curl \
+    zip \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    && docker-php-ext-install pdo pdo_mysql zip
 
-# Set working directory
+# Copy project files from composer stage
 WORKDIR /var/www/html
+COPY --from=composer /app /var/www/html
 
-# Copy project files
-COPY . .
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Permissions for Laravel
+# Set permissions (optional but recommended)
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html
 
-# Expose port
-EXPOSE 8000
-
-# Start Laravel using built-in server
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Expose port 9000 and start php-fpm
+EXPOSE 9000
+CMD ["php-fpm"]

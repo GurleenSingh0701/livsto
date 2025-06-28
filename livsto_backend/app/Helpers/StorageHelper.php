@@ -14,6 +14,10 @@ if (!function_exists('store_json_data')) {
     }
 }
 
+function dummyHelper() {
+    return 'This is a dummy helper';
+}
+
 if (!function_exists('get_json_data')) {
     function get_json_data($filename) {
         $path = storage_path('app/' . $filename);
