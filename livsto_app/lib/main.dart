@@ -802,6 +802,19 @@ class _SellerDashboardState extends State<SellerDashboard> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    onChanged: (value) async {
+                      if (value.length > 3) {
+                        // Simulate AI recognition
+                        await Future.delayed(const Duration(milliseconds: 500));
+                        if (value.toLowerCase().contains('phone')) {
+                          categoryController.text = 'Electronics';
+                          priceController.text = '599.99';
+                        } else if (value.toLowerCase().contains('shirt')) {
+                          categoryController.text = 'Clothing';
+                          priceController.text = '24.99';
+                        }
+                      }
+                    },
                     controller: nameController,
                     decoration: const InputDecoration(
                       labelText: 'Product Name',
@@ -989,7 +1002,9 @@ class AuthService {
 }
 
 class ApiService {
-  static const _baseUrl = 'http://localhost:8000/api';
+  // static const _baseUrl = 'http://localhost:8000/api/register';
+
+  static const _baseUrl = 'https://livsto.onrender.com/api';
 
   Future<Map<String, String>> _getHeadersWithAuth() async {
     final token = await AuthService.getToken();
